@@ -20,6 +20,10 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    private static final String CLAIM_TOKEN_TYPE = "type";
+    private static final String TOKEN_TYPE_ACCESS = "ACCESS";
+    private static final String TOKEN_TYPE_REFRESH = "REFRESH";
+
     private final SecretKey secretKey;
     private final long accessTokenValidity;
     private final long refreshTokenValidity;
@@ -41,6 +45,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getId()))
                 .claim("role", user.getRole().name())
+                .claim(CLAIM_TOKEN_TYPE, TOKEN_TYPE_ACCESS)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiry))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -53,6 +58,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getId()))
+                .claim(CLAIM_TOKEN_TYPE, TOKEN_TYPE_REFRESH)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiry))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -65,5 +71,10 @@ public class JwtTokenProvider {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public boolean isRefreshToken(Claims claims) {
+        Object type = claims.get(CLAIM_TOKEN_TYPE);
+        return TOKEN_TYPE_REFRESH.equals(type);
     }
 }

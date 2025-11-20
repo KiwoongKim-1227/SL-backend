@@ -42,7 +42,7 @@ public class SecurityConfig {
                 // OAuth2 로그인 과정에서는 세션이 필요하므로 IF_REQUIRED로 설정
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/refresh", "/oauth2/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth

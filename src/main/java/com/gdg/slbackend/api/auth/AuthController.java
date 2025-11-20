@@ -1,13 +1,18 @@
 package com.gdg.slbackend.api.auth;
 
+import com.gdg.slbackend.api.auth.dto.AuthTokenResponse;
+import com.gdg.slbackend.api.auth.dto.RefreshTokenRequest;
 import com.gdg.slbackend.api.user.dto.UserResponse;
 import com.gdg.slbackend.global.response.ApiResponse;
 import com.gdg.slbackend.global.security.UserPrincipal;
 import com.gdg.slbackend.service.auth.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,5 +36,10 @@ public class AuthController {
     @GetMapping("/me")
     public ApiResponse<UserResponse> me(@AuthenticationPrincipal UserPrincipal principal) {
         return ApiResponse.success(authService.toUserResponse(principal));
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthTokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return ApiResponse.success(authService.refreshTokens(request.getRefreshToken()));
     }
 }

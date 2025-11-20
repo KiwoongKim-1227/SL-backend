@@ -9,6 +9,8 @@ import com.gdg.slbackend.global.exception.ErrorCode;
 import com.gdg.slbackend.global.exception.GlobalException;
 import com.gdg.slbackend.global.security.JwtTokenProvider;
 import com.gdg.slbackend.global.security.UserPrincipal;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -67,6 +69,30 @@ public class AuthService {
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
 
         return new AuthTokenResponse(accessToken, refreshToken);
+    }
+
+    public AuthTokenResponse refreshTokens(String refreshToken) {
+        try {
+            Claims claims = jwtTokenProvider.parseClaims(refreshToken);
+
+            if (!jwtTokenProvider.isRefreshToken(claims)) {
+                throw new GlobalException(ErrorCode.INVALID_REQUEST);
+            }
+
+            User user = userRepository.findById(Long.parseLong(claims.getSubject()))
+                    .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+
+            if (user.isBANNED()) {
+                throw new GlobalException(ErrorCode.USER_BANNED);
+            }
+
+            String newAccessToken = jwtTokenProvider.createAccessToken(user);
+            String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
+
+            return new AuthTokenResponse(newAccessToken, newRefreshToken);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new GlobalException(ErrorCode.UNAUTHORIZED);
+        }
     }
 
     public UserResponse toUserResponse(UserPrincipal principal) {
