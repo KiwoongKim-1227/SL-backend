@@ -3,7 +3,7 @@ name: Feature request
 about: github Feature issue
 title: ''
 labels: ''
-assignees: nmmn1004, KiwoongKim-1227
+assignees: KiwoongKim-1227, nmmn1004
 
 ---
 
@@ -13,7 +13,9 @@ assignees: nmmn1004, KiwoongKim-1227
 
 ## 작업 내용
 
-이곳에 해당 기능을 구현하기 위한 작업 내용을 적으세요.
+[] 이곳에 해당 기능을 구현하기 위한 작업 내용을 적으세요.
+[] 이곳에 해당 기능을 구현하기 위한 작업 내용을 적으세요.
+[] 이곳에 해당 기능을 구현하기 위한 작업 내용을 적으세요.
 
 ## 참고사항
 
