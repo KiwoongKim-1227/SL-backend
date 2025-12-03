@@ -1,10 +1,12 @@
 package com.gdg.slbackend.service.community;
 
+import com.gdg.slbackend.api.community.dto.CommunityMembershipRequest;
 import com.gdg.slbackend.api.community.dto.CommunityRequest;
 import com.gdg.slbackend.api.community.dto.CommunityResponse;
 import com.gdg.slbackend.domain.community.Community;
 import com.gdg.slbackend.domain.community.CommunityMembership;
 import com.gdg.slbackend.domain.user.User;
+import com.gdg.slbackend.global.enums.Role;
 import com.gdg.slbackend.global.exception.ErrorCode;
 import com.gdg.slbackend.global.exception.GlobalException;
 import com.gdg.slbackend.service.communityMembership.CommunityMembershipCreator;
@@ -31,14 +33,17 @@ public class CommunityService {
 
     public CommunityResponse createCommunity(CommunityRequest communityRequest, Long userId) {
         User user = userFinder.findByIdOrThrow(userId);
+        Community community = communityCreator.create(communityRequest, user);
 
-        /*
-        * 해당 유저의 아이디로 멤버십 설정, admin 역할 부여?
-        * */
+        communityMembershipCreator.createCommunityMembership(
+                new CommunityMembershipRequest(community.getId()),
+                userId,
+                Role.ADMIN,
+                true
+        );
 
 
-
-        return CommunityResponse.from(communityCreator.create(communityRequest, user));
+        return CommunityResponse.from(community);
     }
 
     @Transactional(readOnly = true)
