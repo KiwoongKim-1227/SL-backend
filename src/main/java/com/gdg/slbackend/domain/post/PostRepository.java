@@ -1,10 +1,10 @@
-package com.gdg.slbackend.domain.community;
+package com.gdg.slbackend.domain.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface CommunityRepository extends JpaRepository<Community, Long> {
+public interface PostRepository extends JpaRepository<Post, Long> {
 
 }
