@@ -81,7 +81,7 @@ spring:
     allowed-headers: "*"
     allow-credentials: true
 
-# logging:
-#   level:
-#     org.hibernate.SQL: debug
-#     org.springframework.security: debug
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
