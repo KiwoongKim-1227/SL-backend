@@ -25,6 +25,7 @@ public class Post extends BaseTimeEntity {
     private String title;
     private String content;
     private Long views;
+    private Long likes;
     private boolean pinned;
 
     private Long communityId;
@@ -76,5 +77,13 @@ public class Post extends BaseTimeEntity {
 
     public void increaseViews() {
         ++views;
+    }
+
+    public void increaseLikes() {
+        ++likes;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

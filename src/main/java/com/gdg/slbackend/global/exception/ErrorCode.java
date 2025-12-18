@@ -36,6 +36,12 @@ public enum ErrorCode {
     POST_INVALID_TITLE("해당 제목의 게시물이 존재하지 않습니다."),
     POST_INVALID_AUTHOR_NICKNAME("해당 닉네임의 게시물이 존재하지 않습니다."),
     POST_INVALID_CATEGORY("해당 카테고리의 게시물이 존재하지 않습니다."),
+    POST_NOT_AUTHOR("게시글 수정은 작성자만 가능합니다."),
+
+    FILE_UPLOAD_FAILED("파일 업로드에 실패햐였습니다."),
+
+    POST_DELETE_FORBIDDEN("해당 게시글을 삭제할 수 있는 권한이 없습니다."),
+    POST_MODIFY_FORBIDDEN("해당 게시글을 수정할 수 있는 권한이 없습니다.")
 
     ;
 
