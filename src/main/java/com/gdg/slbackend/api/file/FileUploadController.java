@@ -22,7 +22,7 @@ import java.io.IOException;
 public class FileUploadController {
     private final AmazonS3Client amazonS3Client;
 
-    @Value("${spring.cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @PostMapping
