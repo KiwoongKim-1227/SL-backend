@@ -4,6 +4,8 @@ import com.gdg.slbackend.domain.community.Community;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 public class CommunityResponse {
@@ -12,6 +14,8 @@ public class CommunityResponse {
     private int year;
     private int semester;
     private String adminNickname;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static CommunityResponse from(Community community) {
         return CommunityResponse.builder()
@@ -20,6 +24,8 @@ public class CommunityResponse {
                 .year(community.getYear())
                 .semester(community.getSemester())
                 .adminNickname(community.getAdmin().getNickname())
+                .createdAt(community.getCreatedAt())
+                .updatedAt(community.getUpdatedAt())
                 .build();
     }
 }

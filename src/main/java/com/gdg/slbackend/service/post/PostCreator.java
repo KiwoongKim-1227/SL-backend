@@ -7,6 +7,8 @@ import com.gdg.slbackend.service.user.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class PostCreator {
@@ -14,7 +16,7 @@ public class PostCreator {
     final private UserFinder userFinder;
 
     public Post createPost(PostRequest postRequest, Long authorId, String imageUrl) {
-        return Post.builder()
+        Post post = Post.builder()
                 .category(postRequest.getCategory())
                 .title(postRequest.getTitle())
                 .content(postRequest.getContent())
@@ -24,6 +26,10 @@ public class PostCreator {
                 .authorId(authorId)
                 .authorNickname(userFinder.findUserNameByIdOrThrow(authorId))
                 .imageUrl(imageUrl)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
+
+        return postRepository.save(post);
     }
 }

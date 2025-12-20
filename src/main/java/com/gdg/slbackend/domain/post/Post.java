@@ -12,12 +12,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "posts")
 @NoArgsConstructor
-public class Post extends BaseTimeEntity {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,6 +29,9 @@ public class Post extends BaseTimeEntity {
     private Long likes;
     private boolean pinned;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     private Long communityId;
     private Long authorId;
     private String authorNickname;
@@ -35,10 +39,10 @@ public class Post extends BaseTimeEntity {
 
 
 //    필요성에 대한 의논 필요
-    private LocalDate deletedAt;
+//    private LocalDate deletedAt;
 
     @Builder
-    public Post(Long communityId, Long authorId, String authorNickname, String imageUrl, String title, String content, Category category, boolean pinned, Long views, LocalDate deletedAt) {
+    public Post(Long communityId, Long authorId, String authorNickname, String imageUrl, String title, String content, Category category, boolean pinned, Long views, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.communityId = communityId;
         this.authorId = authorId;
         this.authorNickname = authorNickname;
@@ -48,7 +52,8 @@ public class Post extends BaseTimeEntity {
         this.category = category;
         this.pinned = pinned;
         this.views = views;
-        this.deletedAt = deletedAt;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public void updateAuthorNickname(String authorNickname) {
@@ -85,5 +90,9 @@ public class Post extends BaseTimeEntity {
 
     public void updateImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void updateUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

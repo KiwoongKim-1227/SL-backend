@@ -10,6 +10,8 @@ import com.gdg.slbackend.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class CommunityCreator {
@@ -21,9 +23,9 @@ public class CommunityCreator {
             throw new GlobalException(ErrorCode.COMMUNITY_INVALID_YEAR);
         }
 
-        if (communityRequest.getSemester() != 1 || communityRequest.getSemester() != 2){
+        /*if (communityRequest.getSemester() != 1 || communityRequest.getSemester() != 2){
             throw new GlobalException(ErrorCode.COMMUNITY_INVALID_SEMESTER);
-        }
+        }*/
 
         if (!userRepository.existsById(admin.getId())) {
             throw new GlobalException(ErrorCode.USER_NOT_FOUND);
@@ -34,6 +36,8 @@ public class CommunityCreator {
                 .year(communityRequest.getYear())
                 .semester(communityRequest.getSemester())
                 .admin(admin)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         return communityRepository.save(community);

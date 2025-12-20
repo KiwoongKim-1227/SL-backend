@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class PostUpdater {
@@ -39,6 +41,7 @@ public class PostUpdater {
         post.updateTitle(request.getTitle());
         post.updateContent(request.getContent());
         post.updateCategory(request.getCategory());
+        post.updateUpdatedAt(LocalDateTime.now());
     }
 
     public void updateViews(Post post) {

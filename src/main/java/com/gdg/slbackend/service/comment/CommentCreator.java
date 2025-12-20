@@ -5,6 +5,8 @@ import com.gdg.slbackend.domain.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class CommentCreator {
@@ -16,6 +18,8 @@ public class CommentCreator {
                 .postId(postId)
                 .authorId(userId)
                 .content(content)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         return commentRepository.save(comment);

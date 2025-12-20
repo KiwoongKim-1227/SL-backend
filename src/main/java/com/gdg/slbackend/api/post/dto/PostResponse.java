@@ -4,6 +4,8 @@ import com.gdg.slbackend.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 public class PostResponse {
@@ -13,6 +15,9 @@ public class PostResponse {
     private String imageUrl;
     private Long views;
     private boolean pinned;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     private Long authorId;
     private String authorNickname;
@@ -29,6 +34,8 @@ public class PostResponse {
                 .authorId(post.getAuthorId())
                 .authorNickname(post.getAuthorNickname())
                 .communityId(post.getCommunityId())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 }
