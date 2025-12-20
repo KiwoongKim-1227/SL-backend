@@ -10,6 +10,8 @@ import com.gdg.slbackend.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class CommunityCreator {
@@ -34,6 +36,8 @@ public class CommunityCreator {
                 .year(communityRequest.getYear())
                 .semester(communityRequest.getSemester())
                 .admin(admin)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         return communityRepository.save(community);

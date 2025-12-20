@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class ResourceCreator {
@@ -24,6 +26,8 @@ public class ResourceCreator {
                 .uploaderId(uploaderId)
                 .title(title)
                 .imageUrl(imageUrl)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         return resourceRepository.save(resource);

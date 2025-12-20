@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,14 +33,23 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false)
     private Long authorId;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     @Builder
-    private Comment(String content, Long postId, Long authorId) {
+    private Comment(String content, Long postId, Long authorId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.content = content;
         this.postId = postId;
         this.authorId = authorId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public void updateContent(String content) {
         this.content = content;
+    }
+
+    public void updateUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

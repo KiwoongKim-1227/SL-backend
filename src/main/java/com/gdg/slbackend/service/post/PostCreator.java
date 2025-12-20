@@ -7,6 +7,8 @@ import com.gdg.slbackend.service.user.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class PostCreator {
@@ -24,6 +26,8 @@ public class PostCreator {
                 .authorId(authorId)
                 .authorNickname(userFinder.findUserNameByIdOrThrow(authorId))
                 .imageUrl(imageUrl)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         return postRepository.save(post);

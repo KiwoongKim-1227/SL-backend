@@ -4,6 +4,8 @@ import com.gdg.slbackend.domain.resource.Resource;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 public class ResourceResponse {
@@ -12,6 +14,8 @@ public class ResourceResponse {
     private String title;
     private String fileId;
     private Long uploaderId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static ResourceResponse from(Resource resource) {
         return ResourceResponse.builder()
@@ -19,6 +23,8 @@ public class ResourceResponse {
                 .title(resource.getTitle())
                 .fileId(resource.getImageUrl())
                 .uploaderId(resource.getUploaderId())
+                .createdAt(resource.getCreatedAt())
+                .updatedAt(resource.getUpdatedAt())
                 .build();
     }
 }

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -35,6 +36,7 @@ public class CommunityUpdater {
         communityMembershipUpdater.updateRole(communityMembership, Role.ADMIN);
 
         community.updateAdmin(user);
+        community.updateUpdatedAt(LocalDateTime.now());
 
         return community;
     }

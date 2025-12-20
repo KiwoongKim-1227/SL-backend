@@ -15,13 +15,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "communities")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Community extends BaseTimeEntity {
+public class Community {
     /**
      * This is Entity the information of communities.
      * Each Communities Authority Managed by CommunityMembership.
@@ -40,15 +40,24 @@ public class Community extends BaseTimeEntity {
     @JoinColumn(name = "created_by")
     private User admin;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     @Builder
-    protected Community(String name, int year, int semester, LocalDate createdAt, LocalDate updateAt, User admin) {
+    protected Community(String name, int year, int semester, LocalDateTime createdAt, LocalDateTime updatedAt, User admin) {
         this.name = name;
         this.year = year;
         this.semester = semester;
         this.admin = admin;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public void updateAdmin(User admin) {
         this.admin = admin;
+    }
+
+    public void updateUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
