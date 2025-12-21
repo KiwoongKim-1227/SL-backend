@@ -1,13 +1,17 @@
 package com.gdg.slbackend.service.resource;
 
+import com.gdg.slbackend.api.resource.dto.ResourceDownloadResponse;
 import com.gdg.slbackend.api.resource.dto.ResourceRequest;
 import com.gdg.slbackend.api.resource.dto.ResourceResponse;
 import com.gdg.slbackend.domain.resource.Resource;
+import com.gdg.slbackend.global.enums.MileageType;
 import com.gdg.slbackend.global.exception.ErrorCode;
 import com.gdg.slbackend.global.exception.GlobalException;
 import com.gdg.slbackend.global.util.S3Uploader;
 import com.gdg.slbackend.service.communityMembership.CommunityMembershipFinder;
+import com.gdg.slbackend.service.mileage.MileageService;
 import com.gdg.slbackend.service.user.UserFinder;
+import com.gdg.slbackend.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -27,7 +31,10 @@ public class ResourceService {
     private final S3Uploader s3Uploader;
 
     private final CommunityMembershipFinder communityMembershipFinder;
+
+    private final UserService userService;
     private final UserFinder userFinder;
+    private final MileageService mileageService;
 
     /* ================= 조회 ================= */
 
@@ -81,6 +88,27 @@ public class ResourceService {
         resourceUpdater.update(resource, request.getTitle());
 
         return ResourceResponse.from(resource);
+    }
+
+    @Transactional
+    public ResourceDownloadResponse downloadResource(
+            Long resourceId,
+            Long downloaderId
+    ) {
+        // 1. 리소스 조회
+        Resource resource = resourceFinder.findByIdOrThrow(resourceId);
+
+        // 2. 자기 자료 다운로드 방지 (선택)
+//        if (resource.getUploaderId().equals(downloaderId)) {
+//            throw new GlobalException(ErrorCode.CANNOT_DOWNLOAD_OWN_RESOURCE);
+//        }
+
+        // 3. 마일리지 처리
+        mileageService.change(downloaderId, MileageType.RESOURCE_DOWNLOAD);
+        mileageService.change(resource.getUploaderId(), MileageType.RESOURCE_UPLOAD_REWARD);
+
+        // 4. 실제 다운로드 정보 반환
+        return ResourceDownloadResponse.from(resource);
     }
 
     /* ================= 삭제 ================= */

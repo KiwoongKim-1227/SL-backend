@@ -1,6 +1,8 @@
 package com.gdg.slbackend.domain.user;
 
 import com.gdg.slbackend.global.entity.BaseTimeEntity;
+import com.gdg.slbackend.global.exception.ErrorCode;
+import com.gdg.slbackend.global.exception.GlobalException;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -83,6 +85,13 @@ public class User extends BaseTimeEntity {
 
     public void useMileage(int amount) {
         this.mileage -= amount;
+    }
+
+    public void changeMileage(int delta) {
+        if (delta < 0 && this.mileage + delta < 0) {
+            throw new GlobalException(ErrorCode.INSUFFICIENT_MILEAGE);
+        }
+        this.mileage += delta;
     }
 
     public void ban() {
