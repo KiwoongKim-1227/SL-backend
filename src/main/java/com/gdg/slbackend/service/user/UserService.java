@@ -1,6 +1,8 @@
 package com.gdg.slbackend.service.user;
 
+import com.gdg.slbackend.api.mileage.dto.MileageHistoryResponse;
 import com.gdg.slbackend.api.user.dto.UserResponse;
+import com.gdg.slbackend.domain.mileageHistory.MileageHistoryRepository;
 import com.gdg.slbackend.domain.user.User;
 import com.gdg.slbackend.domain.user.UserRepository;
 import com.gdg.slbackend.global.exception.ErrorCode;
@@ -8,13 +10,17 @@ import com.gdg.slbackend.global.exception.GlobalException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final MileageHistoryRepository mileageHistoryRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, MileageHistoryRepository mileageHistoryRepository) {
         this.userRepository = userRepository;
+        this.mileageHistoryRepository = mileageHistoryRepository;
     }
 
     public UserResponse getUserById(Long id) {
@@ -49,6 +55,19 @@ public class UserService {
     }
 
     @Transactional
+    public int changeMileage(Long userId, int delta) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+
+        if (delta < 0 && user.getMileage() + delta < 0) {
+            throw new GlobalException(ErrorCode.INSUFFICIENT_MILEAGE);
+        }
+
+        user.changeMileage(delta);
+        return user.getMileage();
+    }
+
+    @Transactional
     public void banUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
@@ -61,6 +80,14 @@ public class UserService {
                 .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
         return user.getMileage();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MileageHistoryResponse> getHistories(Long userId) {
+        return mileageHistoryRepository.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(MileageHistoryResponse::from)
+                .toList();
     }
 
     @Transactional

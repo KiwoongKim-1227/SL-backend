@@ -6,6 +6,7 @@ import com.gdg.slbackend.api.user.dto.UserResponse;
 import com.gdg.slbackend.global.response.ApiResponse;
 import com.gdg.slbackend.global.security.UserPrincipal;
 import com.gdg.slbackend.service.auth.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,6 +40,7 @@ public class AuthController {
 
     @GetMapping("/me")
     @Operation(summary = "내 프로필 조회")
+    @SecurityRequirement(name = "bearerAuth")
     public ApiResponse<UserResponse> me(@AuthenticationPrincipal UserPrincipal principal) {
         return ApiResponse.success(authService.toUserResponse(principal));
     }

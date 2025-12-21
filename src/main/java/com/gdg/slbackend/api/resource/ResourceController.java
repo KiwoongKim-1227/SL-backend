@@ -1,5 +1,6 @@
 package com.gdg.slbackend.api.resource;
 
+import com.gdg.slbackend.api.resource.dto.ResourceDownloadResponse;
 import com.gdg.slbackend.api.resource.dto.ResourceRequest;
 import com.gdg.slbackend.api.resource.dto.ResourceResponse;
 import com.gdg.slbackend.global.security.UserPrincipal;
@@ -57,6 +58,14 @@ public class ResourceController {
                         principal.getId(),
                         request
                 ));
+    }
+
+    @PostMapping("/{resourceId}/download")
+    public ResourceDownloadResponse download(
+            @PathVariable Long resourceId,
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        return resourceService.downloadResource(resourceId, user.getId());
     }
 
     @PatchMapping("/resources/{resourceId}")

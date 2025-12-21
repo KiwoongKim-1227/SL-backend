@@ -1,18 +1,23 @@
 package com.gdg.slbackend.api.user;
 
+import com.gdg.slbackend.api.mileage.dto.MileageHistoryResponse;
 import com.gdg.slbackend.api.user.dto.UserMileageResponse;
 import com.gdg.slbackend.api.user.dto.UserResponse;
 import com.gdg.slbackend.global.response.ApiResponse;
 import com.gdg.slbackend.global.security.UserPrincipal;
 import com.gdg.slbackend.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController //수정테스트
 @RequestMapping("/users")
 @Tag(name = "User", description = "사용자 조회 및 마일리지 관리 API")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     /**
@@ -53,6 +58,14 @@ public class UserController {
     ) {
         int mileage = userService.getMileage(principal.getId());
         return ApiResponse.success(new UserMileageResponse(mileage));
+    }
+
+    @GetMapping("/me/mileage/history")
+    @Operation(summary = "Look up User's history of mileage")
+    public List<MileageHistoryResponse> getHistory(
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        return userService.getHistories(user.getId());
     }
 
     /**
