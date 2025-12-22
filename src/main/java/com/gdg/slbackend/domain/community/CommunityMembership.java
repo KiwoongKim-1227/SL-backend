@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -44,10 +44,10 @@ public class CommunityMembership {
 
     private boolean isBanned;
 
-    private LocalDate joinedAt;
+    private LocalDateTime joinedAt;
 
     @Builder
-    protected CommunityMembership(Role role, boolean isPinned, boolean isBanned, LocalDate joinedAt, User user, Community community) {
+    protected CommunityMembership(Role role, boolean isPinned, boolean isBanned, LocalDateTime joinedAt, User user, Community community) {
         this.role = role;
         this.isPinned = isPinned;
         this.isBanned = isBanned;
