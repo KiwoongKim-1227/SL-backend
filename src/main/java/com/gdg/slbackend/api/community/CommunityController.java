@@ -40,7 +40,7 @@ public class CommunityController {
     )
     public ResponseEntity<CommunityResponse> createCommunity(
             @RequestBody CommunityRequest communityRequest,
-            @Valid @AuthenticationPrincipal UserPrincipal principal
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(communityService.createCommunity(communityRequest, principal));
     }
@@ -52,7 +52,7 @@ public class CommunityController {
     )
     public ResponseEntity<CommunityResponse> getCommunity(
             @PathVariable Long communityId,
-            @Valid @AuthenticationPrincipal UserPrincipal principal
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(communityService.getCommunity(communityId, principal));
     }
@@ -63,7 +63,7 @@ public class CommunityController {
             description = "Read the communities by user's id"
     )
     public ResponseEntity<List<CommunityResponse>> getAllCommunity(
-            @Valid @AuthenticationPrincipal UserPrincipal principal
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.ok(
                 communityService.getCommunityAll(principal)
@@ -78,7 +78,7 @@ public class CommunityController {
     public ResponseEntity<CommunityResponse> updateCommunityAdmin(
             @PathVariable Long communityId,
             @Valid @RequestBody CommunityUpdateAdminRequest updateAdminRequest,
-            @Valid @AuthenticationPrincipal UserPrincipal principal
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.ok(communityService.updateCommunityAdmin(communityId, principal, updateAdminRequest.getNewAdminUserId()));
     }
@@ -90,7 +90,7 @@ public class CommunityController {
     )
     public ResponseEntity<CommunityResponse> updateCommunityPinned(
             @PathVariable Long communityId,
-            @Valid @AuthenticationPrincipal UserPrincipal principal
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.ok(communityService.updateCommunityPinned(communityId, principal));
     }
@@ -102,7 +102,7 @@ public class CommunityController {
     )
     public ApiResponse<Void> deleteCommunity(
             @PathVariable Long communityId,
-            @Valid @AuthenticationPrincipal UserPrincipal principal
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         communityService.deleteCommunity(communityId, principal);
         return ApiResponse.success();
