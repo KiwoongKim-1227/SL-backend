@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +22,11 @@ public class CommunityMembershipFinder {
         return communityMembershipRepository
                 .findByUserIdAndCommunityId(communityId, userId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.INTERNAL_SERVER_ERROR));
+    }
+
+    @Transactional
+    public Optional<CommunityMembership> findById(Long communityId, Long userId) {
+        return communityMembershipRepository.findByUserIdAndCommunityId(communityId, userId);
     }
 
     @Transactional(readOnly = true)

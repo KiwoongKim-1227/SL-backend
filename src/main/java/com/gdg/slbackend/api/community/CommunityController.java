@@ -51,9 +51,10 @@ public class CommunityController {
             description = "Read the community by community's id"
     )
     public ResponseEntity<CommunityResponse> getCommunity(
-            @PathVariable Long communityId
+            @PathVariable Long communityId,
+            @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.getCommunity(communityId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.getCommunity(communityId, principal.getId()));
     }
 
     @GetMapping
@@ -78,6 +79,18 @@ public class CommunityController {
             @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.ok(communityService.updateCommunityAdmin(communityId, principal.getId(), updateAdminRequest.getNewAdminUserId()));
+    }
+
+    @PatchMapping("/{communityId}/pinned")
+    @Operation(
+            summary = "Update the community pinned",
+            description = "Update the pinned of the community"
+    )
+    public ResponseEntity<CommunityResponse> updateCommunityPinned(
+            @PathVariable Long communityId,
+            @Valid @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        return ResponseEntity.ok(communityService.updateCommunityPinned(communityId, principal.getId()));
     }
 
     @DeleteMapping("/{communityId}")

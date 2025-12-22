@@ -30,4 +30,16 @@ public class CommunityMembershipCreator {
 
         return communityMembershipRepository.save(communityMembership);
     }
+
+    public CommunityMembership createCommunityMembershipByCommunityId(Long communityId, Long userId, Role role, boolean pin) {
+        CommunityMembership communityMembership = CommunityMembership.builder()
+                .role(role)
+                .isPinned(pin)
+                .isBanned(false)
+                .joinedAt(LocalDate.now())
+                .user(userFinder.findByIdOrThrow(userId))
+                .community(communityFinder.findByIdOrThrow(communityId))
+                .build();
+        return communityMembershipRepository.save(communityMembership);
+    }
 }
