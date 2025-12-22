@@ -23,6 +23,6 @@ public class CommunityMembershipUpdater {
     }
 
     public void updatePinned(CommunityMembership communityMembership) {
-        communityMembership.updateIsPinned(true);
+        communityMembership.updateIsPinned(!communityMembership.isPinned());
     }
 }
