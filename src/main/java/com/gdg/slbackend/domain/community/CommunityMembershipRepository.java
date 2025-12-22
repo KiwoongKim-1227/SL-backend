@@ -10,10 +10,10 @@ import java.util.Optional;
 
 @Repository
 public interface CommunityMembershipRepository extends JpaRepository<CommunityMembership, Long> {
-    Optional<CommunityMembership> findByUserIdAndCommunityId(Long communityId, Long userId);
+    Optional<CommunityMembership> findByCommunityIdAndUserId(Long communityId, Long userId);
     List<CommunityMembership> findByCommunityOrderByIsPinnedDescIdAsc(Community community);
     List<CommunityMembership> findAllByUserId(Long userId);
-    boolean existsByUserIdAndCommunityIdAndRole(Long communityId, Long userId, Role role);
+    boolean existsByCommunityIdAndUserIdAndRole(Long communityId, Long userId, Role role);
 
     Long user(User user);
 }
