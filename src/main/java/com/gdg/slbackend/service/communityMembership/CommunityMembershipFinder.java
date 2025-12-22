@@ -29,7 +29,7 @@ public class CommunityMembershipFinder {
             Long communityId,
             Long userId
     ) {
-        return repository.findByCommunityIdAndUserId(communityId, userId);
+        return communityMembershipRepository.findByCommunityIdAndUserId(communityId, userId);
     }
 
     @Transactional(readOnly = true)
@@ -56,13 +56,13 @@ public class CommunityMembershipFinder {
 
     @Transactional(readOnly = true)
     public List<CommunityMembership> findAllByUserId(Long userId) {
-        return repository.findAllByUserId(userId);
+        return communityMembershipRepository.findAllByUserId(userId);
     }
 
 
     @Transactional(readOnly = true)
     public boolean isAdmin(Long communityId, Long userId) {
-        return repository.existsByCommunityIdAndUserIdAndRole(
+        return communityMembershipRepository.existsByCommunityIdAndUserIdAndRole(
                 communityId,
                 userId,
                 Role.ADMIN
