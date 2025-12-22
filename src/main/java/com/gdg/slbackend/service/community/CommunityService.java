@@ -10,6 +10,7 @@ import com.gdg.slbackend.domain.user.User;
 import com.gdg.slbackend.global.enums.Role;
 import com.gdg.slbackend.global.exception.ErrorCode;
 import com.gdg.slbackend.global.exception.GlobalException;
+import com.gdg.slbackend.global.security.UserPrincipal;
 import com.gdg.slbackend.service.communityMembership.CommunityMembershipCreator;
 import com.gdg.slbackend.service.communityMembership.CommunityMembershipFinder;
 import com.gdg.slbackend.service.communityMembership.CommunityMembershipUpdater;
@@ -35,13 +36,13 @@ public class CommunityService {
     private final CommunityMembershipFinder communityMembershipFinder;
     private final CommunityMembershipUpdater communityMembershipUpdater;
 
-    public CommunityResponse createCommunity(CommunityRequest communityRequest, Long userId) {
-        User user = userFinder.findByIdOrThrow(userId);
+    public CommunityResponse createCommunity(CommunityRequest communityRequest, UserPrincipal principal) {
+        User user = userFinder.findByIdOrThrow(principal.getId());
         Community community = communityCreator.create(communityRequest, user);
 
         communityMembershipCreator.createCommunityMembership(
                 new CommunityMembershipRequest(community.getId()),
-                userId,
+                user.getId(),
                 Role.ADMIN,
                 true
         );
@@ -50,10 +51,10 @@ public class CommunityService {
     }
 
     @Transactional(readOnly = true)
-    public CommunityResponse getCommunity(Long communityId, Long userId) {
+    public CommunityResponse getCommunity(Long communityId, UserPrincipal principal) {
         Community community = communityFinder.findByIdOrThrow(communityId);
 
-        Optional<CommunityMembership> communityMembershipOpt = communityMembershipFinder.findById(communityId, userId);
+        Optional<CommunityMembership> communityMembershipOpt = communityMembershipFinder.findById(communityId, principal.getId());
 
         CommunityMembershipResponse membershipResponse = communityMembershipOpt.map(communityMembership -> {
             User user = communityMembership.getUser();
@@ -64,10 +65,10 @@ public class CommunityService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommunityResponse> getCommunityAll(Long userId) {
+    public List<CommunityResponse> getCommunityAll(UserPrincipal principal) {
         List<Community> communities = communityFinder.findAll();
 
-        List<CommunityMembership> memberships = communityMembershipFinder.findAllByUserId(userId);
+        List<CommunityMembership> memberships = communityMembershipFinder.findAllByUserId(principal.getId());
 
         Map<Long, CommunityMembership> membershipMap = memberships.stream()
                 .collect(Collectors.toMap(
@@ -101,13 +102,13 @@ public class CommunityService {
 
 
     @Transactional
-    public CommunityResponse updateCommunityAdmin(Long communityId, Long newAdminUserId, Long requestUserId) {
+    public CommunityResponse updateCommunityAdmin(Long communityId, UserPrincipal principal, Long newAdminUserId) {
         /* 해당 커뮤니티의 관리자가 아닌 경우 */
-        if(!communityMembershipFinder.isAdmin(communityId, requestUserId)) {
+        if(!communityMembershipFinder.isAdmin(communityId, principal.getId())) {
             throw new GlobalException(ErrorCode.COMMUNITY_NOT_ADMIN);
         }
         /* 시스템 관리자가 아닌 경우 */
-        if(!userFinder.isSystemAdmin(requestUserId)) {
+        if(!userFinder.isSystemAdmin(principal.getId())) {
             throw new GlobalException(ErrorCode.USER_NOT_SYSTEM_ADMIN);
         }
 
@@ -115,15 +116,15 @@ public class CommunityService {
     }
 
     @Transactional
-    public CommunityResponse updateCommunityPinned(Long communityId, Long userId) {
+    public CommunityResponse updateCommunityPinned(Long communityId, UserPrincipal principal) {
         Community community = communityFinder.findByIdOrThrow(communityId);
 
-        Optional<CommunityMembership> communityMembershipOpt = communityMembershipFinder.findById(communityId, userId);
+        Optional<CommunityMembership> communityMembershipOpt = communityMembershipFinder.findById(communityId, principal.getId());
 
         CommunityMembership membership = communityMembershipOpt.orElseGet(() ->
                 communityMembershipCreator.createCommunityMembershipByCommunityId(
                         communityId,
-                        userId,
+                        principal.getId(),
                         Role.MEMBER,
                         true
                 )
@@ -143,8 +144,8 @@ public class CommunityService {
     }
 
 
-    public void deleteCommunity(Long communityId, Long userId) {
-        if (communityMembershipFinder.isAdmin(userId, communityId)) {
+    public void deleteCommunity(Long communityId, UserPrincipal principal) {
+        if (communityMembershipFinder.isAdmin(principal.getId(), communityId)) {
             communityDeleter.deleteById(communityId);
         }
         else {
