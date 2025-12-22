@@ -3,6 +3,8 @@ package com.gdg.slbackend.api.community;
 import com.gdg.slbackend.api.community.dto.CommunityRequest;
 import com.gdg.slbackend.api.community.dto.CommunityResponse;
 import com.gdg.slbackend.api.community.dto.CommunityUpdateAdminRequest;
+import com.gdg.slbackend.global.exception.ErrorCode;
+import com.gdg.slbackend.global.exception.GlobalException;
 import com.gdg.slbackend.global.response.ApiResponse;
 import com.gdg.slbackend.global.security.UserPrincipal;
 import com.gdg.slbackend.service.community.CommunityService;
@@ -42,7 +44,7 @@ public class CommunityController {
             @RequestBody CommunityRequest communityRequest,
             @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.createCommunity(communityRequest, principal.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.createCommunity(communityRequest, principal));
     }
 
     @GetMapping("/{communityId}")
@@ -54,7 +56,7 @@ public class CommunityController {
             @PathVariable Long communityId,
             @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.getCommunity(communityId, principal.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.getCommunity(communityId, principal));
     }
 
     @GetMapping
@@ -65,7 +67,9 @@ public class CommunityController {
     public ResponseEntity<List<CommunityResponse>> getAllCommunity(
             @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.getCommunityAll(principal.getId()));
+        return ResponseEntity.ok(
+                communityService.getCommunityAll(principal)
+        );
     }
 
     @PatchMapping("/{communityId}/admin")
@@ -78,7 +82,7 @@ public class CommunityController {
             @Valid @RequestBody CommunityUpdateAdminRequest updateAdminRequest,
             @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ResponseEntity.ok(communityService.updateCommunityAdmin(communityId, principal.getId(), updateAdminRequest.getNewAdminUserId()));
+        return ResponseEntity.ok(communityService.updateCommunityAdmin(communityId, principal, updateAdminRequest.getNewAdminUserId()));
     }
 
     @PatchMapping("/{communityId}/pinned")
@@ -90,7 +94,7 @@ public class CommunityController {
             @PathVariable Long communityId,
             @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ResponseEntity.ok(communityService.updateCommunityPinned(communityId, principal.getId()));
+        return ResponseEntity.ok(communityService.updateCommunityPinned(communityId, principal));
     }
 
     @DeleteMapping("/{communityId}")
@@ -102,7 +106,7 @@ public class CommunityController {
             @PathVariable Long communityId,
             @Valid @AuthenticationPrincipal UserPrincipal principal
     ) {
-        communityService.deleteCommunity(communityId, principal.getId());
+        communityService.deleteCommunity(communityId, principal);
         return ApiResponse.success();
     }
 }
