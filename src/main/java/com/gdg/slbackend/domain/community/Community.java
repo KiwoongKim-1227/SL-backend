@@ -1,7 +1,6 @@
 package com.gdg.slbackend.domain.community;
 
 import com.gdg.slbackend.domain.user.User;
-import com.gdg.slbackend.global.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

@@ -20,20 +20,20 @@ public class CommunityMembershipFinder {
     @Transactional
     public CommunityMembership findByIdOrThrow(Long communityId, Long userId) {
         return communityMembershipRepository
-                .findByUserIdAndCommunityId(userId, communityId) // ✅
+                .findByUserIdAndCommunityId(communityId, userId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     @Transactional
     public Optional<CommunityMembership> findById(Long communityId, Long userId) {
         return communityMembershipRepository
-                .findByUserIdAndCommunityId(userId, communityId); // ✅
+                .findByUserIdAndCommunityId(communityId, userId);
     }
 
     @Transactional(readOnly = true)
     public CommunityMembership findAdminMembershipOrThrow(Long communityId, Long userId) {
         CommunityMembership communityMembership = communityMembershipRepository
-                .findByUserIdAndCommunityId(userId, communityId) // ✅
+                .findByUserIdAndCommunityId(communityId, userId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.INTERNAL_SERVER_ERROR));
 
         if (communityMembership.getRole() != Role.ADMIN) {
@@ -46,7 +46,7 @@ public class CommunityMembershipFinder {
     @Transactional(readOnly = true)
     public boolean isPinned(Long communityId, Long userId) {
         CommunityMembership membership = communityMembershipRepository
-                .findByUserIdAndCommunityId(userId, communityId) // ✅
+                .findByUserIdAndCommunityId(communityId, userId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.INTERNAL_SERVER_ERROR));
 
         return membership.isPinned();
@@ -67,7 +67,7 @@ public class CommunityMembershipFinder {
     @Transactional(readOnly = true)
     public boolean isAdmin(Long communityId, Long userId) {
         return communityMembershipRepository.existsByUserIdAndCommunityIdAndRole(
-                userId, communityId, Role.ADMIN // ✅
+                communityId, userId, Role.ADMIN
         );
     }
 }
