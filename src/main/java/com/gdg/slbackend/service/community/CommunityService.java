@@ -51,53 +51,63 @@ public class CommunityService {
     }
 
     @Transactional(readOnly = true)
-    public CommunityResponse getCommunity(Long communityId, UserPrincipal principal) {
-        Community community = communityFinder.findByIdOrThrow(communityId);
+public CommunityResponse getCommunity(Long communityId, UserPrincipal principal) {
+    Community community = communityFinder.findByIdOrThrow(communityId);
 
-        Optional<CommunityMembership> communityMembershipOpt = communityMembershipFinder.findById(communityId, principal.getId());
+    Optional<CommunityMembership> membershipOpt =
+            communityMembershipFinder.findById(
+                    communityId,
+                    principal.getId()
+            );
 
-        CommunityMembershipResponse membershipResponse = communityMembershipOpt.map(communityMembership -> {
-            User user = communityMembership.getUser();
-            return CommunityMembershipResponse.from(communityMembership, user, community);
-        }).orElse(null);
+    CommunityMembershipResponse membershipResponse =
+            membershipOpt
+                    .map(m -> CommunityMembershipResponse.from(
+                            m,
+                            m.getUser(),
+                            community
+                    ))
+                    .orElse(null);
 
-        return CommunityResponse.from(community, membershipResponse);
-    }
+    return CommunityResponse.from(community, membershipResponse);
+}
 
     @Transactional(readOnly = true)
-    public List<CommunityResponse> getCommunityAll(UserPrincipal principal) {
-        List<Community> communities = communityFinder.findAll();
+public List<CommunityResponse> getCommunityAll(UserPrincipal principal) {
 
-        List<CommunityMembership> memberships = communityMembershipFinder.findAllByUserId(principal.getId());
+    List<Community> communities = communityFinder.findAll();
 
-        Map<Long, CommunityMembership> membershipMap = memberships.stream()
-                .collect(Collectors.toMap(
-                        m -> m.getCommunity().getId(),
-                        m -> m
-                ));
+    List<CommunityMembership> memberships =
+            communityMembershipFinder.findAllByUserId(principal.getId());
 
-        return communities.stream()
-                .sorted((c1, c2) -> {
-                    boolean pinned1 = membershipMap.get(c1.getId()) != null && membershipMap.get(c1.getId()).isPinned();
-                    boolean pinned2 = membershipMap.get(c2.getId()) != null && membershipMap.get(c2.getId()).isPinned();
-                    return Boolean.compare(pinned2, pinned1); // pinned true가 위로
-                })
-                .map(c -> {
-                    CommunityMembership membership = membershipMap.get(c.getId());
-                    CommunityMembershipResponse membershipResponse = null;
+    Map<Long, CommunityMembership> membershipMap =
+            memberships.stream()
+                    .collect(Collectors.toMap(
+                            m -> m.getCommunity().getId(),
+                            m -> m
+                    ));
 
-                    if (membership != null) {
-                        membershipResponse = CommunityMembershipResponse.from(
-                                membership,
-                                membership.getUser(),
-                                c
-                        );
-                    }
-
-                    return CommunityResponse.from(c, membershipResponse);
-                })
-                .toList();
-    }
+    return communities.stream()
+            .sorted((c1, c2) -> {
+                boolean p1 = membershipMap.get(c1.getId()) != null
+                        && membershipMap.get(c1.getId()).isPinned();
+                boolean p2 = membershipMap.get(c2.getId()) != null
+                        && membershipMap.get(c2.getId()).isPinned();
+                return Boolean.compare(p2, p1);
+            })
+            .map(c -> {
+                CommunityMembership m = membershipMap.get(c.getId());
+                CommunityMembershipResponse mr =
+                        m == null ? null
+                                : CommunityMembershipResponse.from(
+                                        m,
+                                        m.getUser(),
+                                        c
+                                );
+                return CommunityResponse.from(c, mr);
+            })
+            .toList();
+}
 
 
 
