@@ -90,5 +90,7 @@ cloud:
      auto: false
 
 app:
- frontend:
-   callback-url: ${FRONT_CALLBACK_URL}
+  frontend:
+    local-callback-url: ${FRONT_CALLBACK_URL_LOCAL}
+    prod-callback-url: ${FRONT_CALLBACK_URL_PROD}
+

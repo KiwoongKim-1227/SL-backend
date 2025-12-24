@@ -21,4 +21,8 @@ public class CommunityMembershipUpdater {
     public void updateRole(CommunityMembership communityMembership, Role role) {
         communityMembership.updateRole(role);
     }
+
+    public void updatePinned(CommunityMembership communityMembership) {
+        communityMembership.updateIsPinned(!communityMembership.isPinned());
+    }
 }

@@ -9,7 +9,7 @@ import com.gdg.slbackend.service.user.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -23,11 +23,23 @@ public class CommunityMembershipCreator {
                 .role(role)
                 .isPinned(pin)
                 .isBanned(false)
-                .joinedAt(LocalDate.now())
+                .joinedAt(LocalDateTime.now())
                 .user(userFinder.findByIdOrThrow(userId))
                 .community(communityFinder.findByIdOrThrow(communityMembershipRequest.getCommunityId()))
                 .build();
 
+        return communityMembershipRepository.save(communityMembership);
+    }
+
+    public CommunityMembership createCommunityMembershipByCommunityId(Long communityId, Long userId, Role role, boolean pin) {
+        CommunityMembership communityMembership = CommunityMembership.builder()
+                .role(role)
+                .isPinned(pin)
+                .isBanned(false)
+                .joinedAt(LocalDateTime.now())
+                .user(userFinder.findByIdOrThrow(userId))
+                .community(communityFinder.findByIdOrThrow(communityId))
+                .build();
         return communityMembershipRepository.save(communityMembership);
     }
 }

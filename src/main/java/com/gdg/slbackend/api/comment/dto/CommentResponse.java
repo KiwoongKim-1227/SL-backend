@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class CommentResponse {
     private Long id;
     private String content;
+    private long likes;
     private Long authorId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -22,6 +23,7 @@ public class CommentResponse {
                 .authorId(comment.getAuthorId())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
+                .likes(comment.getLikes())
                 .build();
     }
 }

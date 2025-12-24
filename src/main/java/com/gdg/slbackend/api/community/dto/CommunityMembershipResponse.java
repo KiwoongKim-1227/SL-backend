@@ -3,11 +3,10 @@ package com.gdg.slbackend.api.community.dto;
 import com.gdg.slbackend.domain.community.Community;
 import com.gdg.slbackend.domain.community.CommunityMembership;
 import com.gdg.slbackend.domain.user.User;
-import com.gdg.slbackend.global.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -16,7 +15,7 @@ public class CommunityMembershipResponse {
     private String role;
     private boolean isPinned;
     private boolean isBanned;
-    private LocalDate joinAt;
+    private LocalDateTime joinAt;
 
     private Long userId;
     private String userNickname;
@@ -31,6 +30,7 @@ public class CommunityMembershipResponse {
                 .isBanned(communityMembership.isBanned())
                 .userId(user.getId())
                 .userNickname(user.getNickname())
+                .joinAt(communityMembership.getJoinedAt())
                 .communityId(community.getId())
                 .build();
     }

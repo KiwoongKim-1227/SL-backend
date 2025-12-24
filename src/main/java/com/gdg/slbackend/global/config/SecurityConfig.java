@@ -33,7 +33,7 @@ public class SecurityConfig {
     private final AuthService authService;
     private final ObjectMapper objectMapper;
 
-    @Value("${app.frontend.callback-url}")
+    @Value("${app.frontend.local-callback-url}")
     private String frontDomain;
 
     public SecurityConfig(
@@ -56,29 +56,29 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger / OpenAPI 허용
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
+                                // Swagger / OpenAPI 허용
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
+                                ).permitAll()
 
-                        // 인증 관련 허용
-                        .requestMatchers(
-                                "/auth/login",
-                                "/auth/refresh",
-                                "/oauth2/**",
-                                "/login/oauth2/**",
-                                "/error"
-                        ).permitAll()
+                                // 인증 관련 허용
+                                .requestMatchers(
+                                        "/auth/login",
+                                        "/auth/refresh",
+                                        "/oauth2/**",
+                                        "/login/oauth2/**",
+                                        "/error"
+                                ).permitAll()
 
-                        // 공개 API
-                        .requestMatchers(HttpMethod.GET, "/memos/**").permitAll()
+                                // 공개 API
+                                .requestMatchers(HttpMethod.GET, "/memos/**").permitAll()
 //                        "/communities/**", "/posts/**", "/resources/**"
-                        .requestMatchers(HttpMethod.POST, "/memos/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/memos/**").permitAll()
 
-                        // 그 외 요청은 인증 필요
-                        .anyRequest().authenticated()
+                                // 그 외 요청은 인증 필요
+                                .anyRequest().authenticated()
                 )
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth -> oauth
