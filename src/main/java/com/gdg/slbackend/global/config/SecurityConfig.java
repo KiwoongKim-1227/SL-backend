@@ -93,7 +93,7 @@ public class SecurityConfig {
 
                             // 프론트로 리다이렉트
                             String redirectUrl = UriComponentsBuilder
-                                    .fromUriString(frontDomain + "/auth/callback")
+                                    .fromUriString(frontDomain)
                                     .fragment("logout=true")
                                     .build()
                                     .toUriString();
