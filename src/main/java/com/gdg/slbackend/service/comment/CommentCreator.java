@@ -5,6 +5,7 @@ import com.gdg.slbackend.domain.comment.CommentRepository;
 import com.gdg.slbackend.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ public class CommentCreator {
 
     private final CommentRepository commentRepository;
 
+    @Transactional
     public Comment create(Long postId, User author, String content) {
         Comment comment = Comment.builder()
                 .postId(postId)
