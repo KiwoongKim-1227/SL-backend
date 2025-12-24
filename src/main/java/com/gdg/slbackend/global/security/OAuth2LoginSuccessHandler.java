@@ -1,10 +1,7 @@
 package com.gdg.slbackend.global.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdg.slbackend.api.auth.dto.AuthTokenResponse;
-import com.gdg.slbackend.global.response.ApiResponse;
 import com.gdg.slbackend.service.auth.AuthService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,21 +11,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
-/**
- * MS OAuth 로그인 성공 시 JWT를 바로 응답 본문으로 내려주는 핸들러.
- */
-@RequiredArgsConstructor
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final AuthService authService;
 
+    // ✅ 프론트 배포 주소
+    @Value("${app.frontend.prod-callback-url}")
+    private String prodCallbackUrl;
+
+    // ✅ 로컬 프론트 고정
     @Value("${app.frontend.local-callback-url}")
-    private String frontDomain;
+    private String localCallbackUrl;
 
     @Override
     public void onAuthenticationSuccess(
@@ -37,20 +36,34 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             Authentication authentication
     ) throws IOException {
 
-        log.info("OAuth2LoginSuccessHandler called");
-
         AuthTokenResponse tokenResponse =
                 authService.handleMicrosoftLogin((OAuth2AuthenticationToken) authentication);
 
-        String redirectUrl = UriComponentsBuilder
-                .fromUriString(frontDomain)
-                .fragment("accessToken=" + tokenResponse.getAccessToken()
-                        + "&refreshToken=" + tokenResponse.getRefreshToken())
-                .build()
-                .toUriString();
+        String redirectBaseUrl = resolveRedirectUrl(request);
 
-        log.info("Redirect to: {}", redirectUrl);
+        String redirectUrl = redirectBaseUrl
+                + "#accessToken=" + tokenResponse.getAccessToken()
+                + "&refreshToken=" + tokenResponse.getRefreshToken();
 
+        log.info("OAuth2 Login Redirect URL: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
+
+    }
+
+    /**
+     * ✅ 배포 백엔드로 접근된 경우만 prod 프론트로 리다이렉트
+     * 그 외 모든 경우는 localhost:3000
+     */
+    private String resolveRedirectUrl(HttpServletRequest request) {
+        String serverName = request.getServerName();
+
+        log.info("OAuth2 request serverName: {}", serverName);
+
+        // 배포 백엔드 도메인
+        if ("skhu-link.duckdns.org".equalsIgnoreCase(serverName)) {
+            return prodCallbackUrl;
+        }
+
+        return localCallbackUrl;
     }
 }
