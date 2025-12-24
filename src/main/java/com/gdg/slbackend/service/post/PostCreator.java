@@ -21,6 +21,7 @@ public class PostCreator {
                 .title(postRequest.getTitle())
                 .content(postRequest.getContent())
                 .views(0L)
+                .likes(0L)
                 .pinned(false)
                 .communityId(postRequest.getCommunityId())
                 .authorId(authorId)

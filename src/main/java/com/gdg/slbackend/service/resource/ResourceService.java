@@ -65,8 +65,7 @@ public class ResourceService {
 
         Resource resource = resourceCreator.create(
                 communityId,
-                userId,
-                userFinder.findUserNameByIdOrThrow(userId),
+                userFinder.findByIdOrThrow(userId),
                 resourceRequest.getTitle(),
                 imageUrl
         );
@@ -108,7 +107,7 @@ public class ResourceService {
 
         // 3. 마일리지 처리
         mileageService.change(downloaderId, MileageType.RESOURCE_DOWNLOAD);
-        mileageService.change(resource.getUploaderId(), MileageType.RESOURCE_DOWNLOAD_UPLOADER_REWARD);
+        mileageService.change(resource.getUploader().getId(), MileageType.RESOURCE_DOWNLOAD_UPLOADER_REWARD);
 
         // 4. 실제 다운로드 정보 반환
         return ResourceDownloadResponse.from(resource);
@@ -128,7 +127,7 @@ public class ResourceService {
     /* ================= 권한 검증 ================= */
 
     private void validateModifyPermission(Resource resource, Long userId) {
-        boolean isUploader = resource.getUploaderId().equals(userId);
+        boolean isUploader = resource.getUploader().getId().equals(userId);
         boolean isCommunityAdmin =
                 communityMembershipFinder.isAdmin(userId, resource.getCommunityId());
         boolean isSystemAdmin =

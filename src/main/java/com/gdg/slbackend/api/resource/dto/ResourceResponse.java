@@ -23,8 +23,8 @@ public class ResourceResponse {
                 .id(resource.getId())
                 .title(resource.getTitle())
                 .fileId(resource.getImageUrl())
-                .uploaderId(resource.getUploaderId())
-                .uploaderNickname(resource.getUploaderNickname())
+                .uploaderId(resource.getUploader().getId())
+                .uploaderNickname(resource.getUploader().getNickname())
                 .createdAt(resource.getCreatedAt())
                 .updatedAt(resource.getUpdatedAt())
                 .build();

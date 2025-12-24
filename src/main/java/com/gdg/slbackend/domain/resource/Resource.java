@@ -1,10 +1,14 @@
 package com.gdg.slbackend.domain.resource;
 
+import com.gdg.slbackend.domain.user.User;
 import com.gdg.slbackend.global.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -25,9 +29,9 @@ public class Resource {
 
     private Long communityId;
 
-    private Long uploaderId;
-
-    private String uploaderNickname;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uploader")
+    private User uploader;
 
     private String title;
 
@@ -40,10 +44,9 @@ public class Resource {
     private String imageUrl;
 
     @Builder
-    public Resource(Long communityId, Long uploaderId, String uploaderNickname, String title, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Resource(Long communityId, User uploader, String title, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.communityId = communityId;
-        this.uploaderId = uploaderId;
-        this.uploaderNickname = uploaderNickname;
+        this.uploader = uploader;
         this.title = title;
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;

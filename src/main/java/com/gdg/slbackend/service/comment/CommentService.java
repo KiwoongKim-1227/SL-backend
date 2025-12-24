@@ -41,7 +41,7 @@ public class CommentService {
     /* 댓글 작성 */
     public CommentResponse createComment(Long postId, Long userId, CommentRequest request) {
 
-        Comment comment = commentCreator.create(postId, userId, userFinder.findUserNameByIdOrThrow(userId), request.getContent());
+        Comment comment = commentCreator.create(postId, userFinder.findByIdOrThrow(userId), request.getContent());
         return CommentResponse.from(comment);
     }
 
@@ -73,7 +73,7 @@ public class CommentService {
     }
 
     private void validateCommentModifyPermission(Comment comment, Long userId) {
-        boolean isAuthor = comment.getAuthorId().equals(userId);
+        boolean isAuthor = comment.getAuthor().getId().equals(userId);
         boolean isSystemAdmin = userFinder.isSystemAdmin(userId);
 
         if (isAuthor || isSystemAdmin) {

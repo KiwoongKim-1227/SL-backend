@@ -2,6 +2,7 @@ package com.gdg.slbackend.service.comment;
 
 import com.gdg.slbackend.domain.comment.Comment;
 import com.gdg.slbackend.domain.comment.CommentRepository;
+import com.gdg.slbackend.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +14,10 @@ public class CommentCreator {
 
     private final CommentRepository commentRepository;
 
-    public Comment create(Long postId, Long userId, String authorNickname, String content) {
+    public Comment create(Long postId, User author, String content) {
         Comment comment = Comment.builder()
                 .postId(postId)
-                .authorId(userId)
-                .authorNickname(authorNickname)
+                .author(author)
                 .content(content)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())

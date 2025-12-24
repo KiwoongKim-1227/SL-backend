@@ -2,6 +2,7 @@ package com.gdg.slbackend.service.resource;
 
 import com.gdg.slbackend.domain.resource.Resource;
 import com.gdg.slbackend.domain.resource.ResourceRepository;
+import com.gdg.slbackend.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,15 +18,13 @@ public class ResourceCreator {
     @Transactional
     public Resource create(
             Long communityId,
-            Long uploaderId,
-            String uploaderNickname,
+            User uploader,
             String title,
             String imageUrl
     ) {
         Resource resource = Resource.builder()
                 .communityId(communityId)
-                .uploaderId(uploaderId)
-                .uploaderNickname(uploaderNickname)
+                .uploader(uploader)
                 .title(title)
                 .imageUrl(imageUrl)
                 .createdAt(LocalDateTime.now())
