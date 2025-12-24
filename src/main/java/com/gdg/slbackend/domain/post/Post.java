@@ -42,7 +42,7 @@ public class Post {
 //    private LocalDate deletedAt;
 
     @Builder
-    public Post(Long communityId, Long authorId, String authorNickname, String imageUrl, String title, String content, Category category, boolean pinned, Long views, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Post(Long communityId, Long authorId, String authorNickname, String imageUrl, String title, String content, Category category, boolean pinned, Long views, Long likes, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.communityId = communityId;
         this.authorId = authorId;
         this.authorNickname = authorNickname;
@@ -52,6 +52,7 @@ public class Post {
         this.category = category;
         this.pinned = pinned;
         this.views = views;
+        this.likes = likes;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
