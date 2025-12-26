@@ -55,26 +55,46 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse getPost(Long communityId, Long postId) {
+    public PostResponse getPost(Long communityId, Long postId, Long userId) {
         Post post = postFinder.findByIdOrThrow(postId);
 
-        // TODO: communityId 검증이 필요하면 여기서 post.getCommunityId()와 비교해서 막기
         postUpdater.updateViews(post);
 
-        return PostResponse.from(post, commentFinder.countByPostId(postId));
+        boolean likedByMe =
+                postLikeRepository.existsByUserIdAndPost(userId, post);
+
+        return PostResponse.from(
+                post,
+                commentFinder.countByPostId(postId),
+                likedByMe
+        );
     }
 
+    public Optional<PostResponse> getPinnedPost(Long communityId, Long userId) {
+        return postFinder.findPinnedPost(communityId)
+                .map(post -> PostResponse.from(
+                        post,
+                        commentFinder.countByPostId(post.getId()),
+                        postLikeRepository.existsByUserIdAndPost(userId, post)
+                ));
+    }
+
+
+
     public List<PostResponse> getAllPosts(Long communityId, Long lastId, Long userId) {
-        CommunityMembership communityMembership = communityMembershipFinder.findByIdOrThrow(communityId, userId);
-        if(communityMembership == null) {
-            communityMembershipCreator.createCommunityMembershipByCommunityId(communityId, userId, Role.MEMBER, false);
-        }
+        CommunityMembership communityMembership =
+                communityMembershipFinder.findByIdOrThrow(communityId, userId);
 
         return postFinder.findAllPost(communityId, lastId)
                 .stream()
-                .map(post -> PostResponse.from(post, commentFinder.countByPostId(post.getId())))
+                .map(post -> PostResponse.from(
+                        post,
+                        commentFinder.countByPostId(post.getId()),
+                        postLikeRepository.existsByUserIdAndPost(userId, post)
+                ))
                 .toList();
     }
+
 
     @Transactional
     public PostResponse updatePinned(Long postId, Long userId) {
@@ -99,24 +119,34 @@ public class PostService {
         return PostResponse.from(post, commentFinder.countByPostId(post.getId()));
     }
 
+    @Transactional
     public PostResponse toggleLike(Long postId, Long userId) {
         Post post = postFinder.findByIdOrThrow(postId);
 
         Optional<PostLike> like =
                 postLikeRepository.findByUserIdAndPost(userId, post);
 
+        boolean likedByMe;
+
         if (like.isPresent()) {
             // 좋아요 취소
             postLikeRepository.delete(like.get());
             post.decreaseLikes();
+            likedByMe = false;
         } else {
             // 좋아요
             postLikeRepository.save(new PostLike(userId, post));
             post.increaseLikes();
+            likedByMe = true;
         }
 
-        return PostResponse.from(post);
+        return PostResponse.from(
+                post,
+                commentFinder.countByPostId(post.getId()),
+                likedByMe
+        );
     }
+
 
 
     public void deletePost(Long postId, Long userId) {

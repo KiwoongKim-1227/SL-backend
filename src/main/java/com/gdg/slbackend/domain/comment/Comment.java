@@ -38,17 +38,18 @@ public class Comment {
     @JoinColumn(name = "author")
     private User author;
 
-    private Long likes;
+    @Column(nullable = false)
+    private int likeCount = 0;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Builder
-    private Comment(String content, Long postId, User author, Long likes, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Comment(String content, Long postId, User author, int likeCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.content = content;
         this.postId = postId;
         this.author = author;
-        this.likes = likes;
+        this.likeCount = likeCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -61,7 +62,14 @@ public class Comment {
         this.updatedAt = updatedAt;
     }
 
-    public void increaseLikes() {
-        ++likes;
+    public void increaseLike() {
+        this.likeCount++;
     }
+
+    public void decreaseLike() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
+    }
+
 }

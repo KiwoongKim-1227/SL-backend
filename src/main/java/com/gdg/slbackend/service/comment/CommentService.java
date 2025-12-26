@@ -3,6 +3,9 @@ package com.gdg.slbackend.service.comment;
 import com.gdg.slbackend.api.comment.dto.CommentRequest;
 import com.gdg.slbackend.api.comment.dto.CommentResponse;
 import com.gdg.slbackend.domain.comment.Comment;
+import com.gdg.slbackend.domain.comment.CommentLike;
+import com.gdg.slbackend.domain.comment.CommentLikeRepository;
+import com.gdg.slbackend.domain.comment.CommentRepository;
 import com.gdg.slbackend.global.enums.Role;
 import com.gdg.slbackend.global.exception.ErrorCode;
 import com.gdg.slbackend.global.exception.GlobalException;
@@ -10,6 +13,8 @@ import com.gdg.slbackend.service.communityMembership.CommunityMembershipFinder;
 import com.gdg.slbackend.service.post.PostFinder;
 import com.gdg.slbackend.service.user.UserFinder;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +32,20 @@ public class CommentService {
     private final PostFinder postFinder;
     private final CommunityMembershipFinder communityMembershipFinder;
 
+    private final CommentLikeRepository commentLikeRepository;
+
     /* 댓글 목록 조회 */
     @Transactional(readOnly = true)
-    public List<CommentResponse> getComments(Long postId) {
+    public List<CommentResponse> getComments(Long postId, Long userId) {
         return commentFinder.findByPostId(postId)
                 .stream()
-                .map(CommentResponse::from)
+                .map(comment -> CommentResponse.from(
+                        comment,
+                        commentLikeRepository.existsByUserIdAndComment(userId, comment)
+                ))
                 .toList();
     }
+
 
     /* 댓글 작성 */
     public CommentResponse createComment(Long postId, Long userId, CommentRequest request) {
@@ -60,12 +71,27 @@ public class CommentService {
 
     /* 댓글 좋아요 */
     @Transactional
-    public CommentResponse updateLikes(Long commentId) {
+    public CommentResponse toggleLike(Long commentId, Long userId) {
         Comment comment = commentFinder.findByIdOrThrow(commentId);
 
-        commentUpdater.updateLikes(comment);
+        Optional<CommentLike> like =
+                commentLikeRepository.findByUserIdAndComment(userId, comment);
 
-        return CommentResponse.from(comment);
+        boolean likedByMe;
+
+        if (like.isPresent()) {
+            // 좋아요 취소
+            commentLikeRepository.delete(like.get());
+            comment.decreaseLike();
+            likedByMe = false;
+        } else {
+            // 좋아요
+            commentLikeRepository.save(new CommentLike(userId, comment));
+            comment.increaseLike();
+            likedByMe = true;
+        }
+
+        return CommentResponse.from(comment, likedByMe);
     }
 
     /* 댓글 삭제 */

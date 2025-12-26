@@ -16,6 +16,7 @@ public class PostResponse {
     private String imageUrl;
     private Long views;
     private long likes;
+    private boolean likedByMe;
     private Category category;
     private boolean pinned;
 
@@ -27,7 +28,7 @@ public class PostResponse {
     private long comments;
     private Long communityId;
 
-    public static PostResponse from(Post post, long comments) {
+    public static PostResponse from(Post post, long comments, boolean likedByMe) {
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -35,6 +36,7 @@ public class PostResponse {
                 .imageUrl(post.getImageUrl())
                 .views(post.getViews())
                 .likes(post.getLikes())
+                .likedByMe(likedByMe)
                 .pinned(post.isPinned())
                 .authorId(post.getAuthorId())
                 .authorNickname(post.getAuthorNickname())
@@ -47,6 +49,10 @@ public class PostResponse {
     }
 
     public static PostResponse from(Post post) {
-        return from(post, 0);
+        return from(post, 0, false);
+    }
+
+    public static PostResponse from(Post post, long l) {
+        return from(post, l, false);
     }
 }

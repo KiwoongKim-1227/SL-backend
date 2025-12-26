@@ -49,23 +49,31 @@ public class PostController {
     @GetMapping("/pinned")
     @Operation(summary = "Get pinned post")
     public ResponseEntity<PostResponse> getPinnedPost(
-            @PathVariable Long communityId
+            @PathVariable Long communityId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return postService.getPinnedPost(communityId)
+        Long userId = principal != null ? principal.getId() : null;
+
+        return postService.getPinnedPost(communityId, userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }
+
 
     @GetMapping("/{postId}")
     @Operation(summary = "Get post")
     public ResponseEntity<PostResponse> getPost(
             @PathVariable Long communityId,
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
+        Long userId = principal != null ? principal.getId() : null;
+
         return ResponseEntity.ok(
-                postService.getPost(communityId, postId)
+                postService.getPost(communityId, postId, userId)
         );
     }
+
 
     @GetMapping
     @Operation(summary = "Get posts with infinite scroll")
