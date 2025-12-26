@@ -6,6 +6,8 @@ import com.gdg.slbackend.api.community.dto.CommunityRequest;
 import com.gdg.slbackend.api.community.dto.CommunityResponse;
 import com.gdg.slbackend.domain.community.Community;
 import com.gdg.slbackend.domain.community.CommunityMembership;
+import com.gdg.slbackend.domain.community.CommunityMembershipRepository;
+import com.gdg.slbackend.domain.community.CommunityRepository;
 import com.gdg.slbackend.domain.user.User;
 import com.gdg.slbackend.global.enums.Role;
 import com.gdg.slbackend.global.exception.ErrorCode;
@@ -36,6 +38,9 @@ public class CommunityService {
     private final CommunityMembershipCreator communityMembershipCreator;
     private final CommunityMembershipFinder communityMembershipFinder;
     private final CommunityMembershipUpdater communityMembershipUpdater;
+
+    private final CommunityMembershipRepository communityMembershipRepository;
+    private final CommunityRepository communityRepository;
 
     /* 커뮤니티 생성 */
     @Transactional
@@ -191,7 +196,8 @@ public class CommunityService {
         if (!canDelete) {
             throw new GlobalException(ErrorCode.COMMUNITY_DELETE_FORBIDDEN);
         }
-
-        communityDeleter.deleteById(communityId);
+        
+        communityMembershipRepository.deleteByCommunityId(communityId);
+        communityRepository.deleteById(communityId);
     }
 }
