@@ -2,10 +2,8 @@ package com.gdg.slbackend.api.comment;
 
 import com.gdg.slbackend.api.comment.dto.CommentRequest;
 import com.gdg.slbackend.api.comment.dto.CommentResponse;
-import com.gdg.slbackend.api.post.dto.PostResponse;
 import com.gdg.slbackend.global.security.UserPrincipal;
 import com.gdg.slbackend.service.comment.CommentService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -36,10 +34,16 @@ public class CommentController {
     /* 댓글 목록 */
     @GetMapping("/posts/{postId}/comments")
     public ResponseEntity<List<CommentResponse>> getComments(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ResponseEntity.ok(commentService.getComments(postId));
+        Long userId = principal != null ? principal.getId() : null;
+
+        return ResponseEntity.ok(
+                commentService.getComments(postId, userId)
+        );
     }
+
 
     /* 댓글 작성 */
     @PostMapping("/posts/{postId}/comments")
@@ -64,15 +68,17 @@ public class CommentController {
         );
     }
 
-    @PatchMapping("/comments/{commentId}/like")
-    @Operation(summary = "Update comment likes")
-    public ResponseEntity<CommentResponse> updateLikes(
-            @PathVariable Long commentId
+    @PatchMapping("/comments/{commentId}/likes")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<CommentResponse> toggleLike(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.ok(
-                commentService.updateLikes(commentId)
+                commentService.toggleLike(commentId, principal.getId())
         );
     }
+
 
     /* 댓글 삭제 */
     @DeleteMapping("/comments/{commentId}")

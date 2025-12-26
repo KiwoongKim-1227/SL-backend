@@ -49,23 +49,31 @@ public class PostController {
     @GetMapping("/pinned")
     @Operation(summary = "Get pinned post")
     public ResponseEntity<PostResponse> getPinnedPost(
-            @PathVariable Long communityId
+            @PathVariable Long communityId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return postService.getPinnedPost(communityId)
+        Long userId = principal != null ? principal.getId() : null;
+
+        return postService.getPinnedPost(communityId, userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }
+
 
     @GetMapping("/{postId}")
     @Operation(summary = "Get post")
     public ResponseEntity<PostResponse> getPost(
             @PathVariable Long communityId,
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
+        Long userId = principal != null ? principal.getId() : null;
+
         return ResponseEntity.ok(
-                postService.getPost(communityId, postId)
+                postService.getPost(communityId, postId, userId)
         );
     }
+
 
     @GetMapping
     @Operation(summary = "Get posts with infinite scroll")
@@ -106,14 +114,16 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}/likes")
-    @Operation(summary = "Update post likes")
-    public ResponseEntity<PostResponse> updateLikes(
-            @PathVariable Long postId
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<PostResponse> toggleLike(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.ok(
-                postService.updateLikes(postId)
+                postService.toggleLike(postId, principal.getId())
         );
     }
+
 
     @DeleteMapping("/{postId}")
     @Operation(summary = "Delete post")

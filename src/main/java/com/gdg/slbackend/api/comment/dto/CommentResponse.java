@@ -11,13 +11,14 @@ import java.time.LocalDateTime;
 public class CommentResponse {
     private Long id;
     private String content;
-    private Long likes;
+    private int likes;
     private Long authorId;
     private String authorNickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private boolean likedByMe;
 
-    public static CommentResponse from(Comment comment) {
+    public static CommentResponse from(Comment comment, boolean likedByMe) {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
@@ -25,7 +26,11 @@ public class CommentResponse {
                 .authorNickname(comment.getAuthor().getNickname())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
-                .likes(comment.getLikes())
+                .likes(comment.getLikeCount())
+                .likedByMe(likedByMe)
                 .build();
+    }
+    public static CommentResponse from(Comment comment) {
+        return from(comment, false);
     }
 }
