@@ -22,4 +22,6 @@ public interface CommunityMembershipRepository
     );
 
     boolean existsByCommunityIdAndUserIdAndRole(Long communityId, Long userId, Role role);
+
+    void deleteByCommunityId(Long communityId);
 }
