@@ -58,7 +58,8 @@ public enum ErrorCode {
      * 자료실 관련 에러 코드
      * */
     RESOURCE_NOT_FOUND("해당 파일이 존재하지 않습니다."),
-    RESOURCE_MODIFY_FORBIDDEN("해당 파일을 수정 및 삭제할 수 있는 권한 이 없습니다.");
+    RESOURCE_MODIFY_FORBIDDEN("해당 파일을 수정 및 삭제할 수 있는 권한 이 없습니다."),
+    COMMUNITY_DELETE_FORBIDDEN("커뮤니티를 삭제하는 데에 오류가 발생했습니다.");
 
 
 
