@@ -186,16 +186,29 @@ public class ResourceService {
     /* ================= 권한 검증 ================= */
 
     private void validateModifyPermission(Resource resource, Long userId) {
-        boolean isUploader = resource.getUploader().getId().equals(userId);
+
+        // 1️⃣ 업로더 여부
+        User uploader = resource.getUploader();
+        boolean isUploader =
+                uploader != null && uploader.getId().equals(userId);
+
+        // 2️⃣ 커뮤니티 관리자 여부 (절대 throw 안 함)
         boolean isCommunityAdmin =
-                communityMembershipFinder.findAdminMembershipOrThrow(resource.getCommunityId(), userId).getRole().equals(Role.ADMIN);
+                communityMembershipFinder.isCommunityAdmin(
+                        resource.getCommunityId(),
+                        userId
+                );
+
+        // 3️⃣ 시스템 관리자 여부
         boolean isSystemAdmin =
                 userFinder.isSystemAdmin(userId);
 
+        // 4️⃣ 권한 검증
         if (!isUploader && !isCommunityAdmin && !isSystemAdmin) {
             throw new GlobalException(ErrorCode.RESOURCE_MODIFY_FORBIDDEN);
         }
     }
+
 
     private String extractKey(String imageUrl) {
         if (imageUrl == null) {
