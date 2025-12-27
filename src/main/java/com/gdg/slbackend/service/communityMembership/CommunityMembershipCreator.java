@@ -8,11 +8,13 @@ import com.gdg.slbackend.service.community.CommunityFinder;
 import com.gdg.slbackend.service.user.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class CommunityMembershipCreator {
     private final CommunityMembershipRepository communityMembershipRepository;
     private final UserFinder userFinder;

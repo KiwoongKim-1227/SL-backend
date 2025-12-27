@@ -3,6 +3,7 @@ package com.gdg.slbackend.service.post;
 import com.gdg.slbackend.api.post.dto.PostRequest;
 import com.gdg.slbackend.api.post.dto.PostResponse;
 import com.gdg.slbackend.domain.community.CommunityMembership;
+import com.gdg.slbackend.domain.community.CommunityMembershipRepository;
 import com.gdg.slbackend.domain.post.Post;
 import com.gdg.slbackend.domain.post.PostLike;
 import com.gdg.slbackend.domain.post.PostLikeRepository;
@@ -34,6 +35,7 @@ public class PostService {
 
     private final UserFinder userFinder;
     private final CommentFinder commentFinder;
+    private final CommunityMembershipRepository communityMembershipRepository;
     private final CommunityMembershipCreator communityMembershipCreator;
     private final CommunityMembershipFinder communityMembershipFinder;
 
@@ -99,7 +101,11 @@ public class PostService {
                             Role.MEMBER,   // 기본 역할
                             false          // pin 여부
                     );
+
+            communityMembershipRepository.save(communityMembership);
         }
+
+
 
         return postFinder.findAllPost(communityId, lastId)
                 .stream()
