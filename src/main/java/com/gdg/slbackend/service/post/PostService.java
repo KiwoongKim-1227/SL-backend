@@ -6,6 +6,7 @@ import com.gdg.slbackend.domain.community.CommunityMembership;
 import com.gdg.slbackend.domain.post.Post;
 import com.gdg.slbackend.domain.post.PostLike;
 import com.gdg.slbackend.domain.post.PostLikeRepository;
+import com.gdg.slbackend.global.enums.Role;
 import com.gdg.slbackend.global.exception.ErrorCode;
 import com.gdg.slbackend.global.exception.GlobalException;
 import com.gdg.slbackend.global.util.S3Uploader;
@@ -15,6 +16,8 @@ import com.gdg.slbackend.service.communityMembership.CommunityMembershipFinder;
 import com.gdg.slbackend.service.user.UserFinder;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,8 +84,22 @@ public class PostService {
 
 
     public List<PostResponse> getAllPosts(Long communityId, Long lastId, Long userId) {
-        CommunityMembership communityMembership =
-                communityMembershipFinder.findByIdOrThrow(communityId, userId);
+
+        CommunityMembership communityMembership;
+
+        try {
+            communityMembership =
+                    communityMembershipFinder.findByIdOrThrow(communityId, userId);
+        } catch (EntityNotFoundException e) {
+            // 없으면 자동 가입
+            communityMembership =
+                    communityMembershipCreator.createCommunityMembershipByCommunityId(
+                            communityId,
+                            userId,
+                            Role.MEMBER,   // 기본 역할
+                            false          // pin 여부
+                    );
+        }
 
         return postFinder.findAllPost(communityId, lastId)
                 .stream()
@@ -93,6 +110,7 @@ public class PostService {
                 ))
                 .toList();
     }
+
 
 
     @Transactional
